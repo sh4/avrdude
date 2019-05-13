@@ -1,0 +1,17 @@
+/INSTALL
+/Makefile.in
+/ac_cfg.h.in
+/aclocal.m4
+/autom4te.cache
+/compile
+/config.guess
+/config.sub
+/configure
+/depcomp
+/m4
+/install-sh
+/ltmain.sh
+/missing
+/windows/Makefile.in
+/ylwrap
+/doc
