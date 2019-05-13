@@ -69,19 +69,11 @@ DIST_SUBDIRS = @DIST_SUBDIRS_AC@
 
 AM_YFLAGS    = -d
 
-avrdude_CPPFLAGS = -DCONFIG_DIR=\"$(sysconfdir)\"
-
 libavrdude_a_CPPFLAGS = -DCONFIG_DIR=\"$(sysconfdir)\"
 libavrdude_la_CPPFLAGS = $(libavrdude_a_CPPFLAGS)
 
-avrdude_CFLAGS   = @ENABLE_WARNINGS@
-
-libavrdude_a_CFLAGS   = @ENABLE_WARNINGS@
+libavrdude_a_CFLAGS   = @ENABLE_WARNINGS@ -I$(top_srcdir)/../../sources/app/src/main/jni
 libavrdude_la_CFLAGS  = $(libavrdude_a_CFLAGS)
-
-avrdude_LDADD  = $(top_builddir)/$(noinst_LIBRARIES) @LIBUSB_1_0@ @LIBHIDAPI@ @LIBUSB@ @LIBFTDI1@ @LIBFTDI@ @LIBHID@ @LIBELF@ @LIBPTHREAD@ -lm
-
-bin_PROGRAMS = avrdude
 
 noinst_LIBRARIES = libavrdude.a
 lib_LTLIBRARIES = libavrdude.la
@@ -188,16 +180,12 @@ libavrdude_a_SOURCES = \
 	usbtiny.c \
 	update.c \
 	wiring.h \
-	wiring.c
+	wiring.c \
+	avrdude-driver.c
 libavrdude_la_SOURCES = $(libavrdude_a_SOURCES)
 libavrdude_la_LDFLAGS = -version-info 1:0
 
 include_HEADERS = libavrdude.h
-
-avrdude_SOURCES = \
-	main.c \
-	term.c \
-	term.h
 
 man_MANS = avrdude.1
 
