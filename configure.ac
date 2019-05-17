@@ -34,7 +34,7 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(ac_cfg.h)
 AC_CONFIG_MACRO_DIR([m4])
 
-LT_INIT()
+LT_INIT([disable-shared])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
