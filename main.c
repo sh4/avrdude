@@ -354,10 +354,10 @@ int main(int argc, char * argv [])
 #endif
 
   /*
-   * Set line buffering for file descriptors so we see stdout and stderr
+   * Set line buffering for file descriptors so we see stderr
    * properly interleaved.
    */
-  setvbuf(stdout, (char*)NULL, _IOLBF, 0);
+  setvbuf(stdout, (char*)NULL, _IONBF, 0);
   setvbuf(stderr, (char*)NULL, _IOLBF, 0);
 
   progname = strrchr(argv[0],'/');
@@ -427,7 +427,7 @@ int main(int argc, char * argv [])
 
 #else
 
-  strcpy(sys_config, CONFIG_DIR);
+  strcpy(sys_config, ".");
   i = strlen(sys_config);
   if (i && (sys_config[i-1] != '/'))
     strcat(sys_config, "/");
@@ -656,7 +656,7 @@ int main(int argc, char * argv [])
     FILE *newstderr = freopen(logfile, "w", stderr);
     if (newstderr == NULL) {
       /* Help!  There's no stderr to complain to anymore now. */
-      printf("Cannot create logfile \"%s\": %s\n",
+      avrdude_message(MSG_INFO, "Cannot create logfile \"%s\": %s\n",
 	     logfile, strerror(errno));
       return 1;
     }

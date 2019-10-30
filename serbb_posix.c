@@ -86,7 +86,7 @@ static int serbb_setpin(PROGRAMMER * pgm, int pinfunc, int value)
     return -1;
 
 #ifdef DEBUG
-  printf("%s to %d\n",serpins[pin],value);
+  avrdude_message(MSG_DEBUG, "%s to %d\n",serpins[pin],value);
 #endif
 
   switch ( pin )
@@ -94,7 +94,7 @@ static int serbb_setpin(PROGRAMMER * pgm, int pinfunc, int value)
     case 3:  /* txd */
 	     r = ioctl(pgm->fd.ifd, value ? TIOCSBRK : TIOCCBRK, 0);
 	     if (r < 0) {
-	       perror("ioctl(\"TIOCxBRK\")");
+	       avrdude_message(MSG_INFO, "ioctl(\"TIOCxBRK\")");
 	       return -1;
 	     }
              break;
@@ -103,7 +103,7 @@ static int serbb_setpin(PROGRAMMER * pgm, int pinfunc, int value)
     case 7:  /* rts */
              r = ioctl(pgm->fd.ifd, TIOCMGET, &ctl);
  	     if (r < 0) {
-	       perror("ioctl(\"TIOCMGET\")");
+	       avrdude_message(MSG_INFO, "ioctl(\"TIOCMGET\")");
 	       return -1;
  	     }
              if ( value )
@@ -112,7 +112,7 @@ static int serbb_setpin(PROGRAMMER * pgm, int pinfunc, int value)
                ctl &= ~(serregbits[pin]);
 	     r = ioctl(pgm->fd.ifd, TIOCMSET, &ctl);
  	     if (r < 0) {
-	       perror("ioctl(\"TIOCMSET\")");
+	       avrdude_message(MSG_INFO, "ioctl(\"TIOCMSET\")");
 	       return -1;
  	     }
              break;
@@ -155,20 +155,20 @@ static int serbb_getpin(PROGRAMMER * pgm, int pinfunc)
     case 9:  /* ri  */
              r = ioctl(pgm->fd.ifd, TIOCMGET, &ctl);
  	     if (r < 0) {
-	       perror("ioctl(\"TIOCMGET\")");
+	       avrdude_message(MSG_INFO, "ioctl(\"TIOCMGET\")");
 	       return -1;
  	     }
              if ( !invert )
              {
 #ifdef DEBUG
-               printf("%s is %d\n",serpins[pin],(ctl & serregbits[pin]) ? 1 : 0 );
+               avrdude_message(MSG_DEBUG, "%s is %d\n",serpins[pin],(ctl & serregbits[pin]) ? 1 : 0 );
 #endif
                return ( (ctl & serregbits[pin]) ? 1 : 0 );
              }
              else
              {
 #ifdef DEBUG
-               printf("%s is %d (~)\n",serpins[pin],(ctl & serregbits[pin]) ? 0 : 1 );
+               avrdude_message(MSG_DEBUG, "%s is %d (~)\n",serpins[pin],(ctl & serregbits[pin]) ? 0 : 1 );
 #endif
                return (( ctl & serregbits[pin]) ? 0 : 1 );
              }
@@ -232,14 +232,14 @@ static int serbb_open(PROGRAMMER *pgm, char *port)
   pgm->fd.ifd = open(port, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
   if (pgm->fd.ifd < 0) {
-    perror(port);
+    avrdude_message(MSG_INFO, port);
     return(-1);
   }
 
   r = tcgetattr(pgm->fd.ifd, &mode);
   if (r < 0) {
     avrdude_message(MSG_INFO, "%s: ", port);
-    perror("tcgetattr");
+    avrdude_message(MSG_INFO, "tcgetattr");
     return(-1);
   }
   oldmode = mode;
@@ -253,7 +253,7 @@ static int serbb_open(PROGRAMMER *pgm, char *port)
   r = tcsetattr(pgm->fd.ifd, TCSANOW, &mode);
   if (r < 0) {
       avrdude_message(MSG_INFO, "%s: ", port);
-      perror("tcsetattr");
+      avrdude_message(MSG_INFO, "tcsetattr");
       return(-1);
   }
 
