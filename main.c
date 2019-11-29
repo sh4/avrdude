@@ -662,6 +662,7 @@ int main(int argc, char * argv [])
     }
   }
 
+#if 0
   if (quell_progress == 0) {
     if (isatty (STDERR_FILENO))
       update_progress = update_progress_tty;
@@ -674,6 +675,7 @@ int main(int argc, char * argv [])
       setvbuf( stdout, NULL, _IONBF, 0 );
     }
   }
+#endif
 
   /*
    * Print out an identifying string so folks can tell what version

@@ -62,6 +62,7 @@ enum Command {
   CMD_SET_DTR,
   CMD_SET_RTS,
   CMD_GET_LAST_ERROR,
+  CMD_SET_PROGRESS,
 };
 
 enum LastErrorResult {
@@ -272,6 +273,29 @@ static int execute_cmd_get_last_error(int read_fd, int write_fd, char* buf, int*
   return LAST_ERR_OK;
 }
 
+static int execute_cmd_set_progress(int read_fd, int write_fd, uint8_t percent_progress, int elapsed_time_milliseconds)
+{
+  int rc;
+  rc = cmd_send(write_fd, CMD_SET_PROGRESS);
+  if (rc < 0) {
+    return rc;
+  }
+  rc = cmd_io_write_byte(write_fd, percent_progress);
+  if (rc < 0) {
+    return rc;
+  }
+  rc = cmd_io_write_int(write_fd, elapsed_time_milliseconds);
+  if (rc < 0) {
+    return rc;
+  }
+  return cmd_io_read_int(read_fd);
+}
+
+static void update_progress_rpc(int percent, double etime, char *hdr)
+{
+  execute_cmd_set_progress(STDIN_FILENO, STDOUT_FILENO, (uint8_t)percent, (int)(etime * 1000));
+}
+
 static int ser_setspeed(union filedescriptor *fd, long baud)
 {
   int rc;
@@ -306,6 +330,7 @@ static int ser_open(char * port, union pinfo pinfo, union filedescriptor *fdp)
 {
   int rc;
   fdp->ifd = 0;
+  update_progress = update_progress_rpc;
 
   /*
    * set serial line attributes
@@ -459,5 +484,6 @@ struct serial_device android_serdev =
 };
 
 struct serial_device *serdev = &android_serdev;
+
 
 #endif  /* WIN32NATIVE */
